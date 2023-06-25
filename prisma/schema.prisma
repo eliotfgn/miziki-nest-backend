@@ -32,3 +32,11 @@ model Tag {
   id   BigInt @id @default(autoincrement())
   name String @unique
 }
+
+model Artist {
+  id             String @id @default(uuid())
+  name           String
+  bio            String
+  profilePic     String
+  followersCount Int
+}
