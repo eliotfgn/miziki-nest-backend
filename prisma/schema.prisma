@@ -22,16 +22,17 @@ enum AlbumType {
 }
 
 model User {
-  id         String   @id @default(uuid())
-  email      String   @unique
-  username   String
-  password   String
-  firstname  String
-  lastname   String
-  profilePic String
-  role       Role     @default(USER)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id               String     @id @default(uuid())
+  email            String     @unique
+  username         String
+  password         String
+  firstname        String
+  lastname         String
+  profilePic       String
+  role             Role       @default(USER)
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  createdPlaylists Playlist[]
 }
 
 model Tag {
@@ -76,4 +77,15 @@ model Track {
   albumId      String
   tags         Tag[]
   artists      Artist[]
+}
+
+model Playlist {
+  id          String  @id @default(uuid())
+  title       String
+  description String?
+  cover       String?
+  likesCount  Int     @default(0)
+  isPrivate   Boolean @default(true)
+  author      User    @relation(fields: [authorId], references: [id])
+  authorId    String
 }
