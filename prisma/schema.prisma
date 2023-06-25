@@ -45,15 +45,15 @@ model Tag {
 }
 
 model Artist {
-  id             String  @id @default(uuid())
+  id             String   @id @default(uuid())
   name           String
   bio            String
   profilePic     String
-  followersCount Int
+  followersCount Int      @default(0)
   albums         Album[]
   tracks         Track[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
 model Album {
@@ -67,8 +67,8 @@ model Album {
   type        AlbumType
   tags        Tag[]
   tracks      Track[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model Track {
@@ -82,20 +82,20 @@ model Track {
   albumId      String
   tags         Tag[]
   artists      Artist[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model Playlist {
-  id          String  @id @default(uuid())
+  id          String   @id @default(uuid())
   title       String
   description String?
   cover       String?
-  likesCount  Int     @default(0)
-  isPrivate   Boolean @default(true)
-  author      User    @relation("createdPlaylists", fields: [authorId], references: [id])
+  likesCount  Int      @default(0)
+  isPrivate   Boolean  @default(true)
+  author      User     @relation("createdPlaylists", fields: [authorId], references: [id])
   authorId    String
-  followers User[] @relation("followingPlaylists")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  followers   User[]   @relation("followingPlaylists")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
