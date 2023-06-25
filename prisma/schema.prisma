@@ -22,17 +22,18 @@ enum AlbumType {
 }
 
 model User {
-  id               String     @id @default(uuid())
-  email            String     @unique
-  username         String
-  password         String
-  firstname        String
-  lastname         String
-  profilePic       String
-  role             Role       @default(USER)
-  createdAt        DateTime   @default(now())
-  updatedAt        DateTime   @updatedAt
-  createdPlaylists Playlist[]
+  id                 String     @id @default(uuid())
+  email              String     @unique
+  username           String
+  password           String
+  firstname          String
+  lastname           String
+  profilePic         String
+  role               Role       @default(USER)
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+  createdPlaylists   Playlist[] @relation("createdPlaylists")
+  followingPlaylists Playlist[] @relation("followingPlaylists")
 }
 
 model Tag {
@@ -86,6 +87,7 @@ model Playlist {
   cover       String?
   likesCount  Int     @default(0)
   isPrivate   Boolean @default(true)
-  author      User    @relation(fields: [authorId], references: [id])
+  author      User    @relation("createdPlaylists", fields: [authorId], references: [id])
   authorId    String
+  followers User[] @relation("followingPlaylists")
 }
