@@ -15,6 +15,12 @@ enum Role {
   ARTIST
 }
 
+enum AlbumType {
+  ALBUM
+  SINGLE
+  EP
+}
+
 model User {
   id         String   @id @default(uuid())
   email      String   @unique
@@ -31,6 +37,7 @@ model User {
 model Tag {
   id   BigInt @id @default(autoincrement())
   name String @unique
+  albums Album[]
 }
 
 model Artist {
@@ -39,4 +46,17 @@ model Artist {
   bio            String
   profilePic     String
   followersCount Int
+  albums Album[]
+}
+
+model Album {
+  id          String    @id @default(uuid())
+  title       String
+  cover       String
+  label       String
+  releaseDate DateTime
+  likesCount  BigInt    @default(0)
+  artists Artist[]
+  type        AlbumType
+  tags Tag[]
 }
