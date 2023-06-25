@@ -35,18 +35,21 @@ model User {
 }
 
 model Tag {
-  id   BigInt @id @default(autoincrement())
-  name String @unique
-  albums Album[]
+  id      BigInt  @id @default(autoincrement())
+  name    String  @unique
+  albums  Album[]
+  Track   Track?  @relation(fields: [trackId], references: [id])
+  trackId String?
 }
 
 model Artist {
-  id             String @id @default(uuid())
+  id             String  @id @default(uuid())
   name           String
   bio            String
   profilePic     String
   followersCount Int
-  albums Album[]
+  albums         Album[]
+  tracks         Track[]
 }
 
 model Album {
@@ -56,7 +59,21 @@ model Album {
   label       String
   releaseDate DateTime
   likesCount  BigInt    @default(0)
-  artists Artist[]
+  artists     Artist[]
   type        AlbumType
-  tags Tag[]
+  tags        Tag[]
+  tracks      Track[]
+}
+
+model Track {
+  id           String   @id @default(uuid())
+  title        String
+  duration     Int
+  audio        String
+  likesCount   Int      @default(0)
+  streamsCount Int?     @default(0)
+  album        Album    @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  albumId      String
+  tags         Tag[]
+  artists      Artist[]
 }
