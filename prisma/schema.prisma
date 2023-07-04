@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,6 +5,83 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 String     @id @default(uuid())
+  email              String     @unique
+  username           String
+  password           String
+  profilePic         String?
+  role               Role       @default(USER)
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+  createdPlaylists   Playlist[] @relation("createdPlaylists")
+  followingPlaylists Playlist[] @relation("followingPlaylists")
+}
+
+model Tag {
+  id      BigInt  @id @default(autoincrement())
+  name    String  @unique
+  trackId String?
+  Track   Track?  @relation(fields: [trackId], references: [id])
+  albums  Album[] @relation("AlbumToTag")
+}
+
+model Artist {
+  id             String   @id @default(uuid())
+  name           String
+  bio            String
+  profilePic     String
+  followersCount Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  albums         Album[]  @relation("AlbumToArtist")
+  tracks         Track[]  @relation("ArtistToTrack")
+}
+
+model Album {
+  id          String    @id @default(uuid())
+  title       String
+  cover       String
+  label       String
+  releaseDate DateTime
+  likesCount  BigInt    @default(0)
+  type        AlbumType
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  tracks      Track[]
+  artists     Artist[]  @relation("AlbumToArtist")
+  tags        Tag[]     @relation("AlbumToTag")
+}
+
+model Track {
+  id           String   @id @default(uuid())
+  title        String
+  duration     Int
+  audio        String
+  likesCount   Int      @default(0)
+  streamsCount Int?     @default(0)
+  albumId      String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  tags         Tag[]
+  album        Album    @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  artists      Artist[] @relation("ArtistToTrack")
+}
+
+model Playlist {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  cover       String?
+  likesCount  Int      @default(0)
+  isPrivate   Boolean  @default(true)
+  authorId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  author      User     @relation("createdPlaylists", fields: [authorId], references: [id])
+  followers   User[]   @relation("followingPlaylists")
 }
 
 enum Role {
@@ -19,83 +93,4 @@ enum AlbumType {
   ALBUM
   SINGLE
   EP
-}
-
-model User {
-  id                 String     @id @default(uuid())
-  email              String     @unique
-  username           String
-  password           String
-  firstname          String
-  lastname           String
-  profilePic         String
-  role               Role       @default(USER)
-  createdAt          DateTime   @default(now())
-  updatedAt          DateTime   @updatedAt
-  createdPlaylists   Playlist[] @relation("createdPlaylists")
-  followingPlaylists Playlist[] @relation("followingPlaylists")
-}
-
-model Tag {
-  id      BigInt  @id @default(autoincrement())
-  name    String  @unique
-  albums  Album[]
-  Track   Track?  @relation(fields: [trackId], references: [id])
-  trackId String?
-}
-
-model Artist {
-  id             String   @id @default(uuid())
-  name           String
-  bio            String
-  profilePic     String
-  followersCount Int      @default(0)
-  albums         Album[]
-  tracks         Track[]
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-}
-
-model Album {
-  id          String    @id @default(uuid())
-  title       String
-  cover       String
-  label       String
-  releaseDate DateTime
-  likesCount  BigInt    @default(0)
-  artists     Artist[]
-  type        AlbumType
-  tags        Tag[]
-  tracks      Track[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-}
-
-model Track {
-  id           String   @id @default(uuid())
-  title        String
-  duration     Int
-  audio        String
-  likesCount   Int      @default(0)
-  streamsCount Int?     @default(0)
-  album        Album    @relation(fields: [albumId], references: [id], onDelete: Cascade)
-  albumId      String
-  tags         Tag[]
-  artists      Artist[]
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-}
-
-model Playlist {
-  id          String   @id @default(uuid())
-  title       String
-  description String?
-  cover       String?
-  likesCount  Int      @default(0)
-  isPrivate   Boolean  @default(true)
-  author      User     @relation("createdPlaylists", fields: [authorId], references: [id])
-  authorId    String
-  followers   User[]   @relation("followingPlaylists")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
 }
