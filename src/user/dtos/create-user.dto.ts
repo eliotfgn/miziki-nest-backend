@@ -1,7 +1,15 @@
 import { Role } from '@prisma/client';
-import { IsEmail, IsNotEmpty, IsOptional, IsString, Matches, Min } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString, Matches } from 'class-validator';
 
-class CreateUserDto {
+export interface CreateUser {
+  email: string;
+  username: string;
+  password: string;
+  profilePic?: string;
+  role: Role;
+}
+
+export class CreateUserDto implements CreateUser {
   @IsEmail()
   email: string;
 
